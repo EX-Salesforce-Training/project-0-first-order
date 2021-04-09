@@ -1,0 +1,3 @@
+trigger CardTrigger on Credit_Card__c (before insert) {
+	CreditCardTriggers.ExpiredCard(trigger.new);
+}  
