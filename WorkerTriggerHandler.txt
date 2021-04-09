@@ -7,9 +7,9 @@ public class WorkerTriggerHandler {
             List<String> servicesOffer = w.Service__c.split(';');
             // query for the menus belong to the current worker
             List<Menu__c> menu = [SELECT service_available__c, Service__c, Worker__c FROM Menu__c WHERE Worker__c=:w.Id];
+            
             for(Menu__c m: menu){
                 // check if the current worker services contain the service listed on menu item
-                // if yes check it if it is unchecked, else uncheck if it is is checked.
                 if(servicesOffer.contains(m.Service__c)){
                     if(m.Service_Available__c==false){
                     	m.Service_Available__c=true;
