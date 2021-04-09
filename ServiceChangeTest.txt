@@ -1,0 +1,52 @@
+@isTest
+public class ServiceChangeTest {
+
+    @isTest
+    static void TestPositive(){
+        Worker__c w = new Worker__c(Address__c='Test Blv', Name='TestWorker', Service__c='Groomer;Trainer');
+        insert w;
+        Menu__c m1 = new Menu__c(Worker__c=w.Id, Dog_breed__c='Something', Price__c=10, Service__c='Groomer', Service_Available__c=true);
+        insert m1;
+        Menu__c m2 = new Menu__c(Worker__c=w.Id, Dog_breed__c='Something', Price__c=11, Service__c='Trainer');
+        insert m2;
+        Menu__c m3 = new Menu__c(Worker__c=w.Id, Dog_breed__c='Something', Price__c=12, Service__c='Veterinarian', Service_Available__c=false);
+        insert m3;
+        
+        // update worker service by removing groomer and adding veterinarian
+        w.Service__c='Trainer;Veterinarian';
+        update w;
+        
+        Menu__c groomerTest = [Select Service_Available__c, id FROM Menu__c Where id=:m1.Id];
+        Menu__c vetTest = [Select Service_Available__c, id FROM Menu__c Where id=:m3.Id];
+        
+        System.assertEquals(false, groomerTest.Service_Available__c);
+        System.assertEquals(true, vetTest.Service_Available__c);
+    }
+    
+    @isTest
+    static void TestNegative(){
+        Worker__c w = new Worker__c(Address__c='Test Blv', Name='TestWorker', Service__c='Groomer;Trainer');
+        insert w;
+        Menu__c m1 = new Menu__c(Worker__c=w.Id, Dog_breed__c='Something', Price__c=10, Service__c='Groomer', Service_Available__c=true);
+        insert m1;
+        Menu__c m2 = new Menu__c(Worker__c=w.Id, Dog_breed__c='Something', Price__c=11, Service__c='Trainer');
+        insert m2;
+        Menu__c m3 = new Menu__c(Worker__c=w.Id, Dog_breed__c='Something', Price__c=12, Service__c='Veterinarian', Service_Available__c=false);
+        insert m3;
+        System.assert(true);
+    }
+    
+    @isTest
+    static void TestMenuInsertPositive(){
+        
+        Worker__c w = new Worker__c(Address__c='Test Blv', Name='TestWorker', Service__c='Groomer');
+        insert w;
+        Menu__c m2 = new Menu__c(Worker__c=w.Id, Dog_breed__c='Something', Price__c=11, Service__c='Trainer');
+        insert m2;
+        
+        Menu__c trainerTest = [Select Service_Available__c, id FROM Menu__c Where id=:m2.Id Limit 1];
+        
+        System.assertEquals(false, trainerTest.Service_Available__c);
+        
+    }
+}
