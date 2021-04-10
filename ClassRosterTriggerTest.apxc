@@ -1,0 +1,121 @@
+@isTest
+public class ClassRosterTriggerTest {
+	
+    @testSetup
+    private static void TestSetupClass() {
+        Account account = new Account();
+        account.name = 'test account';
+        
+        Insert account;
+        
+        Contact contact = new Contact();
+        contact.lastname = 'Test';
+        contact.AccountId = account.Id;
+        
+        Insert contact;
+        
+        Class__c newClass = new Class__c();
+        newClass.Class_Price__c = '$75';
+        newClass.Capacity__c = 4;
+        newClass.Day__c = 'Monday';
+        newClass.Start_Date__c = System.now();
+        newClass.Class_Time__c = Time.newInstance(2, 16, 0, 0);
+        
+        Insert newClass;
+        
+        Class_Roster__c newStudent = new Class_Roster__c();
+        newStudent.Class__c = newClass.Id;
+        newStudent.Contact__c = contact.Id;
+        
+        Insert newStudent;
+    }
+    
+    @isTest
+    private static void TP_GetClassCharge() {
+        Class_Roster__c newStudent = [SELECT Class__c FROM Class_Roster__c LIMIT 1];
+        
+        Integer charge = ClassRosterTriggerHandler.GetClassCharge(newStudent);
+        System.assertEquals(charge, 75);
+    }
+    
+    @isTest
+    private static void NP_GetClassCharge() {
+        Class_Roster__c invalidStudent = new Class_Roster__c();
+        
+        Integer charge = ClassRosterTriggerHandler.GetClassCharge(invalidStudent);
+        System.assert(charge == 0);
+    }
+    
+    @isTest
+    private static void TP_GetAssociatedAccount() {
+        Class_Roster__c newStudent = [SELECT Contact__c FROM Class_Roster__c LIMIT 1];
+        Account predicted = [SELECT name FROM Account LIMIT 1];
+        
+        Account acc = ClassRosterTriggerHandler.GetAssociatedAccount(newStudent);
+        
+        System.assertEquals(predicted.Id, acc.Id);
+    }
+    
+    @isTest
+    private static void NP_GetAssociatedAccount() {
+        Class_Roster__c invalidStudent = new Class_Roster__c();
+        Contact c = new Contact();
+        c.lastname = 'Test';
+        Class_Roster__c unlinkedStudent = new Class_Roster__c();
+        unlinkedStudent.Contact__c = c.Id;
+        
+        Account nullAccount1 = ClassRosterTriggerHandler.GetAssociatedAccount(invalidStudent);
+        Account nullAccount2 = ClassRosterTriggerHandler.GetAssociatedAccount(unlinkedStudent);
+        
+        System.assertEquals(nullAccount1, nullAccount2);
+    }
+    
+    @isTest
+    private static void TP_AddChargeToAccount() {
+        Account acc = [SELECT name FROM Account LIMIT 1];
+        Integer chargeAmount = 75;
+        
+        Charge__c newCharge = ClassRosterTriggerHandler.CreateLinkedCharge(acc, chargeAmount, '');
+                
+        System.assert( (newCharge.Account__c == acc.Id) && (newCharge.Amount__c == chargeAmount) );
+    }
+    
+    @isTest
+    private static void NP_AddChargeToAccount() {
+        Account acc = null;
+        Integer negativeCharge = -1;
+        Integer zeroCharge = 0;
+        Account acc2 = [SELECT name FROM Account LIMIT 1];
+        
+        Charge__c nullCharge = ClassRosterTriggerHandler.CreateLinkedCharge(acc, negativeCharge, '');
+        Charge__c noCharge = ClassRosterTriggerHandler.CreateLinkedCharge(acc2, zeroCharge, '');
+        Charge__c negCharge = ClassRosterTriggerHandler.CreateLinkedCharge(acc2, negativeCharge, '');
+        
+        System.assert(nullCharge == noCharge && noCharge == negCharge);
+    }
+    
+    @isTest
+    private static void NP_GenerateChargeName() {
+        Class_Roster__c errorRoster = new Class_Roster__c();
+        String errorString = ClassRosterTriggerHandler.GenerateChargeName(errorRoster);
+        
+        System.assert(errorString == 'Error Charge');
+    }
+    
+    @isTest
+    private static void TP_AutoAddCharge() {
+        Class__c newClass = [SELECT name FROM Class__c LIMIT 1];
+        Contact contact = [SELECT name FROM Contact LIMIT 1];
+        
+        Class_Roster__c newStudent = new Class_Roster__c();
+        newStudent.Class__c = newClass.Id;
+        newStudent.Contact__c = contact.Id;
+        
+        Insert newStudent;
+        
+        Account acc = [SELECT name FROM Account LIMIT 1];
+        Charge__c charge = [SELECT account__c FROM Charge__c LIMIT 1];
+        
+        System.assert(acc.id == charge.account__c);
+    }
+}

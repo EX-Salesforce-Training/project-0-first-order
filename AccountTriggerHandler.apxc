@@ -1,0 +1,28 @@
+public class AccountTriggerHandler {
+	
+    public static void LinkPrimary(List<Account> newAccounts) {
+        List<Contact> updatedContacts = new List<Contact>();
+        for (Account newAccount : newAccounts) {
+            if (PrimaryAlreadyAssociated(newAccount)) continue;
+            Contact linkedContact = GetAndLinkPrimary(newAccount);
+            updatedContacts.add(linkedContact);
+        }
+        Update updatedContacts;
+    }
+    
+    @testVisible
+    private static boolean PrimaryAlreadyAssociated(Account accountToCheck) {
+        if (accountToCheck.Primary__c == null) return true;
+        Contact primary = [SELECT AccountId FROM Contact WHERE id =: accountToCheck.Primary__c];
+        return primary.AccountId == accountToCheck.id;
+    }
+    
+    @testVisible
+    private static Contact GetAndLinkPrimary(Account unlinkedAccount) {
+        if (unlinkedAccount == null) return null;
+        
+        Contact primary = [SELECT AccountId FROM Contact WHERE id =: unlinkedAccount.Primary__c];
+        primary.AccountId = unlinkedAccount.Id;
+        return primary;
+    }
+}

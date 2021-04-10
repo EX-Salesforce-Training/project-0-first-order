@@ -1,0 +1,50 @@
+public class IncidentTriggerHandler {
+	
+    public static void AssignTasksToManager(List<Incident__c> newIncidents) {
+        List<Task> tasksToAdd = new List<Task>();
+        for (Incident__c incident : newIncidents) {
+            Task newTask = CreateIncidentTask(incident);
+            tasksToAdd.add(newTask);
+        }
+        Insert tasksToAdd;
+    }
+    
+    @testVisible
+    private static Task CreateIncidentTask(Incident__c newIncident) {
+        if (newIncident == null) return null;
+        
+        Task newTask = new Task();
+        String recordTypeName = Schema.SObjectType.Incident__c.getRecordTypeInfosById().get(newIncident.recordtypeid).getname();
+        newTask.Subject = 'New ' + recordTypeName;
+        String incidentScribe = [SELECT name FROM User where id =: newIncident.OwnerId].name;
+        newTask.Description = 'New incident created by: ' + incidentScribe + 
+            '. Incident description:\n' + newIncident.Incident_Description__c;
+        newTask.OwnerId = GetAQManager().Id;
+        newTask.Status = 'Not Started';
+        newTask.Priority = GetPriority(newIncident);
+        newTask.WhoId = newIncident.Victim__c;
+        
+        return newTask;
+    }
+    
+    @testVisible 
+    private static String GetPriority(Incident__c newIncident) {
+        if (newIncident.X911_Called__c || newIncident.EAP_Used__c != null)
+            return 'High';
+        return 'Low';
+    }
+    
+    @testVisible
+    private static User GetAQManager() {
+        UserRole managerSet = [SELECT name FROM UserRole WHERE name = 'Aquatics Manager'];
+        User manager;
+        try {
+        	manager = [SELECT userRoleId, isActive FROM User WHERE userRoleId =: managerSet.Id AND isActive = true LIMIT 1];
+        }
+        catch(System.QueryException e) {
+            Profile admin = [SELECT id FROM Profile WHERE name = 'System Administrator'];
+            manager = [SELECT id, profileId FROM User WHERE ProfileId =: admin.Id AND isActive = true LIMIT 1];
+        }
+        return manager;
+    }
+}
