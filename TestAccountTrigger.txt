@@ -1,0 +1,37 @@
+@isTest
+public class TestAccountTrigger {
+    @isTest static void TestCreateAccount() {
+        // Test data setup
+        // Manually create an account
+        Account acct = new Account(Name='test account',Email__c='test@test.com');
+        insert acct;
+        
+        // Get the contact just created
+        Contact ct = [SELECT id,Name,Email FROM Contact WHERE AccountId=:acct.Id];
+        
+        // Perform test
+        Database.SaveResult insertResult = Database.insert(acct, false);
+
+        // Verify 
+   		System.assert(!insertResult.isSuccess());
+        System.assertEquals(acct.Name,ct.Name);
+        System.assertEquals(acct.Email__c,ct.Email);
+	}
+    @isTest static void UpdateAccount() {
+		// Test data setup
+        // Manually create an account
+        //Account acct = new Account(Name='test account',Email__c='test@test.com');
+        //insert acct;
+        
+        // Get the contact just created
+        //Contact ct = [SELECT id,Name,Email FROM Contact WHERE AccountId=:acct.Id];
+        
+        // Perform test
+        //Database.upsertertResult = Database.upsert(acct, false);
+
+        // Verify 
+   		//System.assert(!insertResult.isSuccess());
+        //System.assertEquals(acct.Name,ct.Name);
+        //System.assertEquals(acct.Email__c,ct.Email);
+}
+}
