@@ -1,0 +1,15 @@
+public class TransactionTriggerHandler {
+    public static void TransactionTrigger(List<Transactions__c> listofTransactions){
+        List<Note> addNote = new List<Note>();    
+        for(Transactions__c t : listofTransactions){
+            if(t.Amount__c > 5000){
+                Note addednotes = new Note();
+                addednotes.Body = t.Account_Name__c;
+                addednotes.Title = 'Contact Account Owner of Transaction';
+                addNote.add(addednotes);     
+            }
+        }
+        
+       	insert addNote;
+    }
+}

@@ -1,0 +1,7 @@
+trigger TransactionTrigger on Transactions__c (before insert) {
+    switch on trigger.operationType{
+        when BEFORE_INSERT{
+            TransactionTriggerHandler.TransactionTrigger(trigger.new);
+        }
+    }
+}
