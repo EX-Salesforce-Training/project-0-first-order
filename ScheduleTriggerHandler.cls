@@ -1,4 +1,10 @@
 public class ScheduleTriggerHandler {
+    public static void CheckWorkerRequestAgreement(List<Appointment__c> appointment){
+        for(Appointment__c a: appointment){
+      
+            a.Worker__c = getCorrectWorker(a.Request__c);
+        }
+    }
     public static void GetPriceForInvoice(String appointment){
         Appointment__c a = [SELECT Id, Invoice__c, Request__c FROM Appointment__c WHERE Id=:appointment];
         Invoice__c invoice = [SELECT Id, Final_Amount_Paid__c FROM Invoice__c WHERE Id=:a.Invoice__c];
@@ -14,6 +20,13 @@ public class ScheduleTriggerHandler {
         update invoice;
     }
     
+    // get workerId from request->menu->worker
+    private static Id getCorrectWorker(String requestId){
+        Request__c request = [SELECT Id, Menu__c FROM Request__c WHERE Id=:requestId];
+        Menu__c menuItem = [SELECT Worker__c FROM Menu__c WHERE Id=:request.Menu__c];
+        Worker__c worker = [SELECT Id FROM Worker__c WHERE Id=:menuItem.Worker__c];
+        return worker.Id;
+    }
     // get the price from menu
     private static Double GetPrice(String requestId){
         Request__c request = [SELECT Id, Menu__c FROM Request__c WHERE Id=:requestId];

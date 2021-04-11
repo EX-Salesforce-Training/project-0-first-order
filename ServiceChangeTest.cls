@@ -12,7 +12,7 @@ public class ServiceChangeTest {
         Menu__c m3 = new Menu__c(Worker__c=w.Id, Dog_breed__c='Something', Price__c=12, Service__c='Veterinarian', Service_Available__c=false);
         insert m3;
         
-        // update worker service by removing groomer and adding veterinarian
+        // update worker service by removing groomer and adding veterinarian1
         w.Service__c='Trainer;Veterinarian';
         update w;
         
