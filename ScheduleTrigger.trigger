@@ -1,5 +1,8 @@
 trigger ScheduleTrigger on Appointment__c (before insert, before update, before delete, after insert, after update, after delete, after undelete) {
 	switch on trigger.operationType{
+        When BEFORE_INSERT{
+            ScheduleTriggerHandler.CheckWorkerRequestAgreement(trigger.new);
+        }
         When AFTER_INSERT{
             // check if the insertion have an invoice associated with it
             for(ID appointment : trigger.newMap.keySet()){

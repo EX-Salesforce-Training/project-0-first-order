@@ -22,15 +22,19 @@ public class ScheduleTriggerHandler {
     
     // get workerId from request->menu->worker
     private static Id getCorrectWorker(String requestId){
-        Request__c request = [SELECT Id, Menu__c FROM Request__c WHERE Id=:requestId];
-        Menu__c menuItem = [SELECT Worker__c FROM Menu__c WHERE Id=:request.Menu__c];
-        Worker__c worker = [SELECT Id FROM Worker__c WHERE Id=:menuItem.Worker__c];
-        return worker.Id;
+        Request__c worker = [SELECT Id, Menu__r.Worker__r.Id FROM Request__c WHERE Id=:requestId];
+        //Request__c request = [SELECT Id, Menu__c FROM Request__c WHERE Id=:requestId];
+        //Menu__c menuItem = [SELECT Worker__c FROM Menu__c WHERE Id=:request.Menu__c];
+        //Worker__c worker = [SELECT Id FROM Worker__c WHERE Id=:menuItem.Worker__c];
+        //System.debug(worker1.Menu__r.Worker__r.Id + ' ' + worker.Id);
+        return worker.Menu__r.Worker__r.Id;
     }
     // get the price from menu
     private static Double GetPrice(String requestId){
-        Request__c request = [SELECT Id, Menu__c FROM Request__c WHERE Id=:requestId];
-        Menu__c menuItem = [SELECT Id, Price__c FROM Menu__c WHERE Id=:request.Menu__c];
-        return menuItem.Price__c;
+        Request__c menuItem = [SELECT Id, Menu__r.Price__c FROM Request__c WHERE Id=:requestId];
+        //Request__c request = [SELECT Id, Menu__c FROM Request__c WHERE Id=:requestId];
+        //Menu__c menuItem = [SELECT Id, Price__c FROM Menu__c WHERE Id=:request.Menu__c];
+        //System.debug(menu.Menu__r.Price__c + ' ' + menuItem.Price__c);
+        return menuItem.Menu__r.Price__c;
     }
 }
