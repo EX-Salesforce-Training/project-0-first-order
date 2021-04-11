@@ -12,31 +12,22 @@ public class MenuTest {
         Menu__c trainerTest = [Select Service_Available__c, id FROM Menu__c Where id=:m2.Id Limit 1];
         
         System.assertEquals(false, trainerTest.Service_Available__c);
-        
-    }
-    
+    } 
     @isTest
     static void TestMenuBulk(){
         List<Worker__c> workerL = new List<Worker__c>();
         List<Menu__c> menuL = new List<Menu__c>();
         
-        for(Integer i  = 0 ; i < 5; i++){
-            Worker__c w = new Worker__c(Address__c='Test Blv', Name='TestWorker' + i, Service__c='Groomer');
-            workerL.add(w);
+        for(Integer i  = 0 ; i < 30; i++){
+            workerL.add(new Worker__c(Address__c='Test Blv', Name='TestWorker' + i, Service__c='Groomer'));
         }
         
-        Test.startTest();
         insert workerL;
         for(Worker__c w: workerL){
-            Menu__c m1 = new Menu__c(Worker__c=w.Id, Dog_breed__c='Something', Price__c=10, Service__c='Groomer');
-            
-            Menu__c m2 = new Menu__c(Worker__c=w.Id, Dog_breed__c='Something', Price__c=11, Service__c='Trainer');
-            
-            Menu__c m3 = new Menu__c(Worker__c=w.Id, Dog_breed__c='Something', Price__c=12, Service__c='Veterinarian');
            	
-            menuL.add(m1);
-            menuL.add(m2);
-            menuL.add(m3);
+            menuL.add(new Menu__c(Worker__c=w.Id, Dog_breed__c='Something', Price__c=10, Service__c='Groomer'));
+            menuL.add(new Menu__c(Worker__c=w.Id, Dog_breed__c='Something', Price__c=11, Service__c='Trainer'));
+            menuL.add(new Menu__c(Worker__c=w.Id, Dog_breed__c='Something', Price__c=12, Service__c='Veterinarian'));
         }
         insert menuL;   
         List<Menu__c> menuTest = [SELECT Service_Available__c, Service__c FROM Menu__c];

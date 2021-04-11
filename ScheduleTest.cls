@@ -55,8 +55,6 @@ public class ScheduleTest {
     static void TestScheduleNegative(){
         Worker__c worker = new Worker__c(Address__c='Test Blv', Name='TestWorker', Service__c='Groomer');
         insert worker;
-        Worker__c worker2 = new Worker__c(Address__c='Test Blv', Name='TestWorker2', Service__c='Groomer');
-        insert worker2;
         Menu__c menu = new Menu__c(Worker__c=worker.Id, Dog_breed__c='Something', Price__c=10, Service__c='Groomer');
         insert menu;
         Request__c request = new Request__c(Menu__c=menu.Id);
@@ -66,11 +64,43 @@ public class ScheduleTest {
         Invoice__c invoice = new Invoice__c(Customer_Account__c = cAccount.Id);
         insert invoice;
         
-        // test if you can put in appoint with wrong worker request combo
+        Worker__c worker2 = new Worker__c(Address__c='Test Blv', Name='TestWorker2', Service__c='Groomer');
+        insert worker2;
+        // test if you can put in appointment with wrong worker request combo, so worker2 with worker request.
         Appointment__c appointment = new Appointment__c(Request__c=request.Id, Worker__c=worker2.id);
         insert appointment;
         Appointment__c testApp = [SELECT Worker__c FROM Appointment__c Limit 1];
+        // it should change the appointmenrt to worker instead of leaving it as worker2.
         System.assertEquals(worker.Id, testApp.Worker__c);
+    }
+    @isTest
+    static void TestScheduleBulk(){
+        Worker__c worker = new Worker__c(Address__c='Test Blv', Name='TestWorker', Service__c='Groomer');
+        insert worker;
+        Menu__c menu = new Menu__c(Worker__c=worker.Id, Dog_breed__c='Something', Price__c=10, Service__c='Groomer');
+        insert menu;
+        Customer_Account__c cAccount= new Customer_Account__c(Something_Private__c='Not a Real Person');
+        insert cAccount;
+        Invoice__c invoice = new Invoice__c(Customer_Account__c = cAccount.Id);
+        insert invoice;
+        
+        // testing a bunch of requests
+        List<Request__c> requestL = new List<Request__c>();
+        
+        for(Integer i = 0; i < 20; i++){
+            requestL.add(new Request__c(Menu__c=menu.Id));
+        }
+
+        insert requestL;
+        
+        List<Appointment__c> appointmentL = new List<Appointment__c>();
+        for(Request__c request: requestL){
+            appointmentL.add(new Appointment__c(Request__c=request.Id, Worker__c=worker.id, Invoice__c=invoice.Id));
+        }
+        insert appointmentL;
+        
+        Integer testAppQuery = [SELECT count() FROM Appointment__c];
+        System.assertEquals(20, testAppQuery);
     }
     @isTest
     static void TestScheduleRestrictedUser(){

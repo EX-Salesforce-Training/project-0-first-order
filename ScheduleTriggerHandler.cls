@@ -10,7 +10,7 @@ public class ScheduleTriggerHandler {
         Invoice__c invoice = [SELECT Id, Final_Amount_Paid__c FROM Invoice__c WHERE Id=:a.Invoice__c];
         
         // update the price of invoice according to what is shown on menu.
-        // also check if invoice have an amount there to begin with. 
+        // also check if invoice have an amount there to begin with, so add on the amount rather than replace
         if(invoice.Final_Amount_Paid__c == null){
             invoice.Final_Amount_Paid__c = GetPrice(a.Request__c);
         }else{
