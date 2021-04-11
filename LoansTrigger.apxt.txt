@@ -1,0 +1,7 @@
+trigger LoansTrigger on Loan__c (before insert) {
+    switch on trigger.operationType{
+        when BEFORE_INSERT{
+		LoanTriggerHandler.LoanTrigger(trigger.new);
+        }
+    }
+}

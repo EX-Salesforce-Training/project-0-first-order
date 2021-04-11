@@ -1,0 +1,11 @@
+public class LoanTriggerHandler {
+    public static void LoanTrigger(List<Loan__c> newLoans){
+     List<Loan__c> existingAccounts  = [SELECT Account__c FROM Loan__c];
+        for(Loan__c nLoan : newLoans) {
+            if(existingAccounts.size() > 0){
+                nLoan.Account__c.addError('Error: You cannot add another Loan to this Account');
+            }
+        }
+       
+    }        
+}
