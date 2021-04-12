@@ -1,0 +1,25 @@
+public class AccountSameTriggerHandler {
+    public static List<Account> checkSame(List<Account> newAccounts) {
+        //Extract account number from new accounts
+        Set<String> newAcntNoSet = new Set<String>();
+        for(Account a: newAccounts) {
+            if(a.AccountNumber != null) {
+                newAcntNoSet.add(a.AccountNumber);
+            }
+        }
+        //Find duplicate accounts in database.
+        Map<String, Account> existingAccountMap = new Map<String, Account>();
+        for(Account existingAccount: [SELECT AccountNumber FROM Account WHERE AccountNumber in :newAcntNoSet]) {
+            existingAccountMap.put(existingAccount.AccountNumber, existingAccount);
+        }
+        
+        //Compare and throw error
+        for(Account a: newAccounts) {
+            Account sameAccount = existingAccountMap.get(a.AccountNumber);
+            if(sameAccount != null) {
+                a.addError('ERROR: There is already an employee with that SSN: ' + sameAccount.Name);
+            }
+        }
+        return newAccounts;
+    }
+}
