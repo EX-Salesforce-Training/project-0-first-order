@@ -1,0 +1,7 @@
+trigger AccountSameTrigger on Account (before insert) { 
+    switch on trigger.operationType{
+        when BEFORE_INSERT{
+            AccountSameTriggerHandler.checkSame(trigger.new);
+        }
+    }
+}
