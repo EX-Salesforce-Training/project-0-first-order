@@ -9,7 +9,7 @@ public class EmployeeDuplicateTriggerHandler {
         }
         //Find duplicate contacts in database.
         Map<String, Employees__c> existingEmployeeMap = new Map<String, Employees__c>();
-        for(Employees__c existingEmployee: [SELECT id, name, Employee_SSN__c FROM Employees__c WHERE Employee_SSN__c in :newSSNSet]) {
+        for(Employees__c existingEmployee: [SELECT Employee_SSN__c FROM Employees__c WHERE Employee_SSN__c in :newSSNSet]) {
             existingEmployeeMap.put(existingEmployee.Employee_SSN__c, existingEmployee);
         }
         
