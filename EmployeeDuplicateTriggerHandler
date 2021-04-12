@@ -1,0 +1,25 @@
+public class EmployeeDuplicateTriggerHandler {
+    public static List<Employees__c> checkDuplicates(List<Employees__c> newEmployees) {
+        //Extract SSN from new employees
+        Set<String> newSSNSet = new Set<String>();
+        for(Employees__c newEmployee: newEmployees) {
+            if(newEmployee.Employee_SSN__c != null) {
+                newSSNSet.add(newEmployee.Employee_SSN__c);
+            }
+        }
+        //Find duplicate contacts in database.
+        Map<String, Employees__c> existingEmployeeMap = new Map<String, Employees__c>();
+        for(Employees__c existingEmployee: [SELECT id, name, Employee_SSN__c FROM Employees__c WHERE Employee_SSN__c in :newSSNSet]) {
+            existingEmployeeMap.put(existingEmployee.Employee_SSN__c, existingEmployee);
+        }
+        
+        //Compare and throw error
+        for(Employees__c newEmployee: newEmployees) {
+            Employees__c duplicateEmployee = existingEmployeeMap.get(newEmployee.Employee_SSN__c);
+            if(duplicateEmployee != null) {
+                newEmployee.addError('ERROR: There is already an identical record: ' + duplicateEmployee.Name);
+            }
+        }
+        return newEmployees;
+    }
+}
