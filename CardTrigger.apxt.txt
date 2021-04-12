@@ -1,3 +1,10 @@
-trigger CardTrigger on Credit_Card__c (before insert) {
-	CreditCardTriggers.ExpiredCard(trigger.new);
-}  
+trigger CardTrigger on Credit_Card__c (after insert) {
+    switch on trigger.operationType{
+        when AFTER_INSERT{
+    		CreditCardTriggers.ExpiredCard(trigger.new);
+        }
+        when AFTER_UPDATE{
+            CreditCardTriggers.ExpiredCard(trigger.new);
+        }
+    }
+}

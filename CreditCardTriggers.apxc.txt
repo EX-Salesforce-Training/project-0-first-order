@@ -1,13 +1,17 @@
 public class CreditCardTriggers {
     public static void ExpiredCard (List<Credit_Card__c> listofCards){
-        //if existing card is expired create a note/task/email
+       
      
-        List<Task> addTask = new List<Task>(); //create task list for bulk
-        for(Credit_Card__c afterinsertCard : listofCards){
-            if (afterinsertCard.Expiration_Date__c == date.today()){
-                Task t = new Task();
+        List<Task> addTask = new List<Task>(); //create task list
+        for(Credit_Card__c c : listofCards){
+            if (c.Expiration_Date__c < date.today()){ //test if date inputed is expired
+                Task t = new Task(); //create task
                 t.Subject = 'Notify Customer of Expired Card';
-                t.Status = 'In Progress';     
+                t.Status = 'In Progress';
+                t.WhatId = c.Id;
+                t.OwnerId = c.OwnerId;
+                t.ActivityDate = date.today() + 7;
+                addTask.add(t);
         	}
     	}
         insert addTask;
