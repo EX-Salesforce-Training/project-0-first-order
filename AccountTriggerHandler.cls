@@ -4,27 +4,21 @@ public class AccountTriggerHandler{
         Account acct = [select Id,Name from Account where Id IN : accList];
         
         //Create the list Buffer for Account
-        List<Contact> conList = new List <Contact>();
+        Contact conBuffer = new Contact ();
         
         for (Account accObj : accList){
             AccountFullNameSolver solver = new AccountFullNameSolver();
             solver.FullNameSolver(accObj);
             
-            Contact conObj = new Contact(
-                AccountId = acct.Id,
-                LastName = solver.GetLName(),
-                FirstName = solver.GetFName(),
-                Phone = accObj.Phone,
-                Email=accObj.Email__c,
-                Street_Address__c = accObj.Street_Address__c,
-                City__c = accObj.City__c,
-                State_Province__c = accObj.State_Province__c,
-                Postal_Zip_Code__c = accObj.Postal_Zip_Code__c
-            );
-            
-            
-            conList.add(conObj);
-            
+            conBuffer.AccountId = acct.Id;
+            conBuffer.LastName = solver.GetLName();
+            conBuffer.FirstName = solver.GetFName();
+            conBuffer.Phone = accObj.Phone;
+            conBuffer.Email=accObj.Email__c;
+            conBuffer.Street_Address__c = accObj.Street_Address__c;
+            conBuffer.City__c = accObj.City__c;
+            conBuffer.State_Province__c = accObj.State_Province__c;
+            conBuffer.Postal_Zip_Code__c = accObj.Postal_Zip_Code__c;
             
             // Debug Section
             System.debug('Last Name: '+ solver.GetLName());
@@ -33,7 +27,7 @@ public class AccountTriggerHandler{
             System.debug('Email: '+accObj.Email__c);
         }
         try{
-            insert conList;
+            insert conBuffer;
         } catch (DmlException e){
             System.debug(e.getMessage());
         }
@@ -75,27 +69,19 @@ public class AccountTriggerHandler{
     public static void InsertPersonalInformation(List<Account> accList){
         // Query for lookup field
         Account acct = [select Id,Name from Account where Id IN : accList];
-        //Create the list Buffer for Account
-        List<Personal_Account_Information__c> paiList = new List <Personal_Account_Information__c>();
-        
+        Personal_Account_Information__c paiBuffer = new Personal_Account_Information__c();
         for (Account accObj : accList){
             AccountFullNameSolver solver = new AccountFullNameSolver();
             solver.FullNameSolver(accObj);
             
-            Personal_Account_Information__c paiObj = new Personal_Account_Information__c(
-    			//OwnerId = acct.CreatedById,
-                Last_Name__c = solver.GetLName(),
-                First_Name__c = solver.GetFName(),
-                Phone__c = accObj.Phone,
-                Email__c = accObj.Email__c,
-                Street_Address__c = accObj.Street_Address__c,
-                City__c = accObj.City__c,
-                State_Province__c = accObj.State_Province__c,
-                Postal_Zip_Code__c = accObj.Postal_Zip_Code__c
-            );
-            
-            
-            paiList.add(paiObj);
+            paiBuffer.Last_Name__c = solver.GetLName();
+            paiBuffer.First_Name__c = solver.GetFName();
+            paiBuffer.Phone__c = accObj.Phone;
+            paiBuffer.Email__c = accObj.Email__c;
+            paiBuffer.Street_Address__c = accObj.Street_Address__c;
+            paiBuffer.City__c = accObj.City__c;
+            paiBuffer.State_Province__c = accObj.State_Province__c;
+            paiBuffer.Postal_Zip_Code__c = accObj.Postal_Zip_Code__c;
             
             
             // Debug Section
@@ -105,7 +91,7 @@ public class AccountTriggerHandler{
             System.debug('Email: '+accObj.Email__c);
         }
         try{
-            insert paiList;
+            insert paiBuffer;
         } catch (DmlException e){
             System.debug(e.getMessage());
         }    
