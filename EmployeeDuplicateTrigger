@@ -1,0 +1,7 @@
+trigger EmployeeDuplicateTrigger on Employees__c (before insert) {
+    switch on trigger.operationType{
+        when BEFORE_INSERT{
+            EmployeeDuplicateTriggerHandler.checkDuplicates(trigger.new);
+        }
+    }
+}
