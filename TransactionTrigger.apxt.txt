@@ -1,6 +1,6 @@
-trigger TransactionTrigger on Transactions__c (before insert) {
+trigger TransactionTrigger on Transactions__c (after insert) {
     switch on trigger.operationType{
-        when BEFORE_INSERT{
+        when AFTER_INSERT{
             TransactionTriggerHandler.TransactionTrigger(trigger.new);
         }
     }

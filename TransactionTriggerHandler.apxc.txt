@@ -1,15 +1,20 @@
 public class TransactionTriggerHandler {
-    public static void TransactionTrigger(List<Transactions__c> listofTransactions){
-        List<Note> addNote = new List<Note>();    
-        for(Transactions__c t : listofTransactions){
-            if(t.Amount__c > 5000){
-                Note addednotes = new Note();
-                addednotes.Body = t.Account_Name__c;
-                addednotes.Title = 'Contact Account Owner of Transaction';
-                addNote.add(addednotes);     
-            }
-        }
+    public static void TransactionTrigger(List<Transactions__c> listofTransactions){ 
         
-       	insert addNote;
+     set<ID> BankId = new set<ID>();   
+    	for(Transactions__c t : listofTransactions){
+         	BankId.add(t.Account_Name__c);
+   	   
+     }
+        //obtain records of accounts with balances pertaining to each transaction
+     List<Bank_Account__c> Acct  = [SELECT ID, Balance__c, Account_Number__c FROM Bank_Account__c WHERE Id=:BankId];
+    
+        for(Transactions__c t : listofTransactions){
+               for(Bank_Account__c acc : Acct){
+                  acc.Balance__c = acc.Balance__c - t.Amount__c;
+               }
+     	}
+        
+        update Acct;
     }
 }
