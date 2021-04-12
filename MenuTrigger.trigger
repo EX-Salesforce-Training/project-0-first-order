@@ -3,5 +3,8 @@ trigger MenuTrigger on Menu__c (before insert, before update, before delete, aft
         When BEFORE_INSERT{
             MenuTriggerHandler.CheckWorkerServiceInsert(trigger.new);
         }
+        When BEFORE_UPDATE{
+            MenuTriggerHandler.CheckWorkerServiceUpdate(trigger.new);
+        }
     }
 }

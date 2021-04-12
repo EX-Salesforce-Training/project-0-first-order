@@ -12,6 +12,15 @@ public class MenuTest {
         Menu__c trainerTest = [Select Service_Available__c, id FROM Menu__c Where id=:m2.Id Limit 1];
         
         System.assertEquals(false, trainerTest.Service_Available__c);
+        trainerTest.Service_Available__c = true;
+        Boolean updatePrevented = false;
+        try{
+            update trainerTest;
+        }catch(Exception e){
+            System.debug(e);
+            updatePrevented = true;
+        }
+        System.assert(updatePrevented);
     } 
     @isTest
     static void TestMenuBulk(){
