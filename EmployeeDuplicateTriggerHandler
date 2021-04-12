@@ -7,7 +7,7 @@ public class EmployeeDuplicateTriggerHandler {
                 newSSNSet.add(newEmployee.Employee_SSN__c);
             }
         }
-        //Find duplicate contacts in database.
+        //Find duplicate employees in database.
         Map<String, Employees__c> existingEmployeeMap = new Map<String, Employees__c>();
         for(Employees__c existingEmployee: [SELECT Employee_SSN__c FROM Employees__c WHERE Employee_SSN__c in :newSSNSet]) {
             existingEmployeeMap.put(existingEmployee.Employee_SSN__c, existingEmployee);
@@ -17,7 +17,7 @@ public class EmployeeDuplicateTriggerHandler {
         for(Employees__c newEmployee: newEmployees) {
             Employees__c duplicateEmployee = existingEmployeeMap.get(newEmployee.Employee_SSN__c);
             if(duplicateEmployee != null) {
-                newEmployee.addError('ERROR: There is already an identical record: ' + duplicateEmployee.Name);
+                newEmployee.addError('ERROR: There is already an employee with that SSN: ' + duplicateEmployee.Name);
             }
         }
         return newEmployees;
