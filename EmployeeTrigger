@@ -1,3 +1,7 @@
 trigger EmployeeTrigger on Employees__c (after insert) {
-    EmployeeTriggerHandler.AcntLink(trigger.new);
+    switch on trigger.operationType{
+        when BEFORE_INSERT{
+            EmployeeTriggerHandler.AcntLink(trigger.new);
+        }
+    }
 }
