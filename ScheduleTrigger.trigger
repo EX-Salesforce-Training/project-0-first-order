@@ -2,23 +2,14 @@ trigger ScheduleTrigger on Appointment__c (before insert, before update, before 
 	switch on trigger.operationType{
         When BEFORE_INSERT{
             ScheduleTriggerHandler.CheckWorkerRequestAgreement(trigger.new);
-        }
+        } 
         When AFTER_INSERT{
             // check if the insertion have an invoice associated with it
-            for(ID appointment : trigger.newMap.keySet()){
-                if(trigger.newMap.get(appointment).Invoice__c != null){
-                    ScheduleTriggerHandler.GetPriceForInvoice(appointment);
-                }
-            }
-            
+            ScheduleTriggerHandler.GetPriceForInvoice(trigger.new, trigger.newMap.keySet());
         }
         When AFTER_UPDATE{
             // check if the update have an invoice associated with it
-            for(ID appointment : trigger.newMap.keySet()){
-                if(trigger.newMap.get(appointment).Invoice__c != null){
-                    ScheduleTriggerHandler.GetPriceForInvoice(appointment);
-                }
-            }
+            ScheduleTriggerHandler.GetPriceForInvoice(trigger.new, trigger.newMap.keySet());
         }
     }
 }

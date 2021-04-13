@@ -3,55 +3,62 @@ public class MenuTest {
 
     @isTest
     static void TestMenuPositive(){
-        
+        // add worker and a menu item for a service the worker does not provide.
         Worker__c w = new Worker__c(Address__c='Test Blv', Name='TestWorker', Service__c='Groomer');
         insert w;
-        Menu__c m2 = new Menu__c(Worker__c=w.Id, Dog_breed__c='Something', Price__c=11, Service__c='Trainer');
-        insert m2;
+        Menu__c m = new Menu__c(Worker__c=w.Id, Dog_breed__c='Something', Price__c=11, Service__c='Trainer');
+        insert m;
         
-        Menu__c trainerTest = [Select Service_Available__c, id FROM Menu__c Where id=:m2.Id Limit 1];
+        // query for the new menu that we inserted
+        Menu__c trainerTest = [Select Service_Available__c, id FROM Menu__c Where id=:m.Id Limit 1];
         
+        // it should be set to false, instead of the default which is true.
         System.assertEquals(false, trainerTest.Service_Available__c);
+        
+        // set the service to true using the same menu item that we queried
         trainerTest.Service_Available__c = true;
+        
         Boolean updatePrevented = false;
+        
+        // try to update it with service available set to true.
         try{
             update trainerTest;
         }catch(Exception e){
             System.debug(e);
             updatePrevented = true;
         }
+        
+        // check if updated was prevented from happening.
         System.assert(updatePrevented);
     } 
+    
     @isTest
     static void TestMenuBulk(){
+        // use list to insert a large amount of worker and menuitem for each worker
         List<Worker__c> workerL = new List<Worker__c>();
         List<Menu__c> menuL = new List<Menu__c>();
         
-        for(Integer i  = 0 ; i < 30; i++){
+        for(Integer i  = 0 ; i < 200; i++){
             workerL.add(new Worker__c(Address__c='Test Blv', Name='TestWorker' + i, Service__c='Groomer'));
         }
         
         insert workerL;
+        
         for(Worker__c w: workerL){
            	
             menuL.add(new Menu__c(Worker__c=w.Id, Dog_breed__c='Something', Price__c=10, Service__c='Groomer'));
             menuL.add(new Menu__c(Worker__c=w.Id, Dog_breed__c='Something', Price__c=11, Service__c='Trainer'));
             menuL.add(new Menu__c(Worker__c=w.Id, Dog_breed__c='Something', Price__c=12, Service__c='Veterinarian'));
         }
-        insert menuL;   
-        List<Menu__c> menuTest = [SELECT Service_Available__c, Service__c FROM Menu__c];
-        Boolean insertCorrected = true;
-        for(Menu__c m: menuTest){
-            if(m.Service__c == 'Groomer' && m.Service_Available__c == false){
-                insertCorrected = false;
-                break;
-            }
-            if((m.Service__c == 'Trainer' || m.Service__c == 'Veterinarian') && m.Service_Available__c == true){
-                insertCorrected = false;
-                break;
-            }
-        }
-        System.assert(insertCorrected);
+        
+        insert menuL; 
+                        
+        // grab the new menuitems we inserted
+        // groomer service should be true, and trainer and veterinarian services are set to false
+        // we query for the opposite of that and count the return
+        System.assertEquals(0, [SELECT count() FROM Menu__c WHERE (Service__c='Groomer' and Service_Available__c=false)
+                             or ((Service__c='Trainer' or Service__c='Veterinarian') and Service_Available__c=true)]);
+        
     }
     @isTest
     static void TestMenuRestrictUser(){
