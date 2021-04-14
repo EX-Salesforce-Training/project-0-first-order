@@ -1,0 +1,14 @@
+trigger CreateEmpAccTrigger on Employees__c (after insert) {
+    //Only fire the Account logic AFTER INSERT of Employee
+    if(trigger.isAfter && trigger.isInsert){
+        //Create a List to store all accounts to be inserted
+        List<Account> acnt = new List<Account>();
+        for(Employees__c e: trigger.new){
+            //Generates the Account
+            Account a = new Account(AccountNumber=e.EmployeeNumber__c, Name=e.Name);
+            acnt.add(a);
+        }
+        //Insert the new Account
+        insert acnt;
+    }
+}
