@@ -1,28 +1,50 @@
 public class AccountTriggerHandler {
-	
+
+    //Links contacts to accounts that list them as primaries
     public static void LinkPrimary(List<Account> newAccounts) {
         List<Contact> updatedContacts = new List<Contact>();
+        Map<Account, Contact> accountMap = GetAccountToContactMap(newAccounts);
+
+        //Iterate through the accounts and link each primary
         for (Account newAccount : newAccounts) {
-            if (PrimaryAlreadyAssociated(newAccount)) continue;
-            Contact linkedContact = GetAndLinkPrimary(newAccount);
+            Contact linkedContact = GetAndLinkPrimary(newAccount, accountMap.get(newAccount));
             updatedContacts.add(linkedContact);
         }
-        Update updatedContacts;
+        Database.Update(updatedContacts, false);
     }
-    
+
+    //Links the primary to the account and returns the contact for update
     @testVisible
-    private static boolean PrimaryAlreadyAssociated(Account accountToCheck) {
-        if (accountToCheck.Primary__c == null) return true;
-        Contact primary = [SELECT AccountId FROM Contact WHERE id =: accountToCheck.Primary__c];
-        return primary.AccountId == accountToCheck.id;
-    }
-    
-    @testVisible
-    private static Contact GetAndLinkPrimary(Account unlinkedAccount) {
-        if (unlinkedAccount == null) return null;
-        
-        Contact primary = [SELECT AccountId FROM Contact WHERE id =: unlinkedAccount.Primary__c];
-        primary.AccountId = unlinkedAccount.Id;
+    private static Contact GetAndLinkPrimary(Account account, Contact primary) {
+        if (account == null || primary == null) return null;
+
+        primary.AccountId = account.Id;
         return primary;
+    }
+
+    //Maps accounts to their primary contacts
+    @testVisible
+    private static Map<Account, Contact> GetAccountToContactMap(List<Account> accounts) {
+        if (accounts == null) return new Map<Account, Contact>();
+
+        //Retrieve all primary contacts
+        Set<Id> contactSet = new Set<Id>();
+        for (Account account : accounts) {
+            contactSet.add(account.Primary__c);
+        }
+        if (contactSet.size() == 0) return new Map<Account, Contact>();
+        List<Contact> possibleContacts = [SELECT accountId FROM Contact WHERE id IN :contactSet];
+
+        //Map students to classes
+        Map<Account, Contact> accountMap = new Map<Account, Contact>();
+        for (Account account : accounts) {
+            for (Contact contact : possibleContacts) {
+                if (account.Primary__c == contact.Id) {
+                    accountMap.put(account, contact);
+                    break;
+                }
+            }
+        }
+        return accountMap;
     }
 }
