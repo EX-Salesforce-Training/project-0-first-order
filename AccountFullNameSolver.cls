@@ -13,14 +13,14 @@ public class AccountFullNameSolver {
         // if Last name account doesn't not exist, Last Name contact will name after account name
         else {
             // split up account name for contact FirstName and LastName
-            String[] fullname = accObj.Name.split(' ');
+            List <String> fullname = accObj.Name.split(' ');
             if(fullname.size()>1){
-                fName = fullname[0];
-                lName = fullname[1];
+                fName = fullname.get(0);
+                lName = fullname.get(1);
             }
             // FirstName Null otherwise
             else{
-                lName = fullname[0];
+                lName = fullname.get(0);
             }
         }
     }
