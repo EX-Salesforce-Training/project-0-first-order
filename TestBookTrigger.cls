@@ -13,7 +13,7 @@ public class TestBookTrigger {
         system.debug(accid);
         //create bulk books
         List<Book__c> lBook = new List<Book__c>();
-        for(Integer i = 0; i < 1; i++){
+        for(Integer i = 0; i < 100; i++){
             for(Account ac : accid){
             	lBook.add(new Book__c(Name='TestBook'+i, Account__c = ac.id));
             }
@@ -31,7 +31,7 @@ public class TestBookTrigger {
         }
         // verify insert libBook
         List <Library_book__c> libBook = [Select id from Library_book__c];
-        System.assertEquals(1,libBook.size());
+        System.assertEquals(100,libBook.size());
         
     }
 }
