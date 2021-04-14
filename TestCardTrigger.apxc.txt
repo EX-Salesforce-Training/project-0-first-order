@@ -1,0 +1,30 @@
+@isTest
+public class TestCardTrigger{
+     
+    @isTest static void bulkTestCard(){
+        Integer failedcnt = 0;
+        List<Credit_Card__c> testCards = new List<Credit_Card__c>();
+        
+        for(Integer i=0; i < 200; i++){
+            	
+                testCards.add(new Credit_Card__c(Name='Steven Fernandez' + i, Expiration_Date__c=date.today().addDays(-14)));
+            	//System.debug(testCards);
+            
+        }
+        
+        //do test
+        List<Database.SaveResult> results = Database.insert(testCards, false);
+        //List<Credit_Card__c> testCred = [SELECT Id, OwnerId FROM Credit_Card__c];
+       //system.debug(testCred);
+        
+       List<Task> testTask = [SELECT OwnerId FROM Task];
+       //system.debug(testTask);
+       system.assertEquals(200, testTask.size());
+        for(Database.SaveResult sr : results){
+            if(!sr.isSuccess()){
+                failedcnt += 1;
+            }
+        }
+               
+    }
+}
