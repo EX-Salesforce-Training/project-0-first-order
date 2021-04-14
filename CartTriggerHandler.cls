@@ -1,45 +1,56 @@
 public class CartTriggerHandler{
     public static void RegisterClass(List <Cart__c> cartList){
-        // Exactring Class ID from trigger
-        // put class ID in the set ID
-        set <ID> idClassList = new set <Id>();     
+        // Exactring Class ID, account id from trigger
+        // put class ID and account id in the set ID
+        set <ID> cartIdClassList = new set <Id>();   
+        set <ID> cartAcctId = new set <ID>();
         for(Cart__c s: CartList){
-            idClassList.add(s.Class__c);
+            cartIdClassList.add(s.Class__c);
+            cartAcctId.add(s.Account__c);
         }
         
         // Class__c Update class list
         // Filter Class base on ID from trigger in Class__c
-        List<Class__c>  lstClass= [Select id,seats__c from Class__c where id IN : idClassList];
-        for(Cart__c cartObj : cartList){
-            for(Class__c objClass : lstClass){
-                // if Class is Full prevent student to add the class
-                if(objClass.Seats__c == 0){
-                    CartObj.Class__c.addError('Class is Full');
-                }
-                else{
-                    // substract class seat and set status to Full if class seat is full
-                    objClass.Seats__c --;
-                    if (objClass.Seats__c == 0){
-                        objClass.Status__c = 'Full';
-                    }
+        List<Class__c>  lstClass= [Select id,seats__c from Class__c where id IN : cartIdClassList];
+        
+        // Flag to raise error if Class is full and cart can't be added
+        Integer flag = 0;
+        
+        for(Class__c objClass : lstClass){
+            // if Class is Full prevent student to add the class
+            if(objClass.Seats__c == 0){
+                flag = 1;
+            }
+            else{
+                // substract class seat and set status to Full if class seat is full
+                objClass.Seats__c --;
+                if (objClass.Seats__c == 0){
+                    objClass.Status__c = 'Full';
                 }
             }
         }
+        // Update the table
         update lstClass;
         
-        // Class_Roster_c insert student in class Roster
-        // Filter Class base on ID from trigger in Class__c
-        Class_Roster__c objRoster= new Class_Roster__c();
-        for(Cart__c s: CartList){
-            for(Class__c objClass : lstClass){
-                // Assign the account to class roster from the account table
-                // Assign The class to thhe Class Roster from the class table
-                objRoster = new Class_Roster__c();
-                objRoster.Class__c = objClass.Id;
-                objRoster.Account__c = s.Account__c;
+        List<Class_Roster__c> newRoster = new List<Class_Roster__c> ();
+        for(Cart__c cartObj : cartList){
+            // Check the flag to see if class need to be added
+            if (flag ==1){
+                cartObj.Class__c.addError('Class is Full');
+            }
+            else{
+                // if class is not full
+                // adding student to Roster
+                Class_Roster__c objRoster= new Class_Roster__c(Account__c = cartObj.Account__c, Class__c = cartObj.Class__c);
+                newRoster.add(objRoster);
             }
         }
-        insert objRoster;
+        try{
+            insert newRoster;
+        } catch (DmlException e){
+            System.debug(e.getMessage());
+        }
+        
     }  
     public static void UnregisterClass(List <Cart__c> cartOlds, Map<id,Cart__c> cartOldM){
         // Extract old values from the old Map
@@ -70,5 +81,5 @@ public class CartTriggerHandler{
                 delete s;
             }
         }   
-	}
+    }
 }
