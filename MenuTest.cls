@@ -38,6 +38,7 @@ public class MenuTest {
         List<Worker__c> workerL = new List<Worker__c>();
         List<Menu__c> menuL = new List<Menu__c>();
         
+        // total record would be number of worker * 3 menu items.
         for(Integer i  = 0 ; i < 200; i++){
             workerL.add(new Worker__c(Address__c='Test Blv', Name='TestWorker' + i, Service__c='Groomer'));
         }
@@ -91,7 +92,6 @@ public class MenuTest {
         insert m1;
         Menu__c m2 = new Menu__c(Worker__c=w.Id, Dog_breed__c='Something', Price__c=11, Service__c='Trainer');
         
-        Test.startTest();
         boolean insertStopped = false;
         boolean updateStopped = false;
         
@@ -112,7 +112,7 @@ public class MenuTest {
             System.debug(e);
             updateStopped = true;
         }
-        Test.stopTest();
+        
         System.assert(insertStopped);
         System.assert(updateStopped);
     }

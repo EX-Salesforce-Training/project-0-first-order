@@ -1,3 +1,6 @@
+/*
+ * get menu of worker and changes it availability to on or off according to the worker's services
+ */
 public class WorkerTriggerHandler {
     
 	public static void HideMenuItem(List<Worker__c> workers){

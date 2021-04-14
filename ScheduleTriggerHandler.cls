@@ -1,3 +1,7 @@
+/*
+ * Check the worker to match with request before insert.
+ * Update amount on invoice when invoice is put on schedule field. Both on update and insert.
+ */
 public class ScheduleTriggerHandler {
     public static void CheckWorkerRequestAgreement(List<Appointment__c> appointments){
 		// make map, key = request Id and value = is just a counter

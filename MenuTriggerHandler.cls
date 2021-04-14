@@ -1,3 +1,7 @@
+/*
+ * Change menu availability to match worker on insert
+ * Disallow menu from being update if service availability does not match worker's
+ */
 public class MenuTriggerHandler {
     
     public static void CheckWorkerServiceInsert(List<Menu__c> menu){
