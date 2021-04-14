@@ -1,0 +1,20 @@
+@isTest public class TestTransactionTrigger {
+    @isTest static void BulkTestTransaction(){
+        List<Transactions__c> testTransaction = new List<Transactions__c>();
+        set<ID> testBankId = new set<ID>();
+        Transactions__c t = new Transactions__c();
+        Bank_Account__c acc = new Bank_Account__c();
+        //add 200 transactions
+        for(Integer i=0; i < 200; i++){
+            	//add bank id to each 200 transactions
+                testTransaction.add(new Transactions__c(Name='99999999999999' + i));
+            	testBankId.add(t.Account_Name__c);
+           
+            
+        }
+        
+        //insert test
+        List<Database.SaveResult> results = Database.insert(testTransaction, false);
+        
+        
+    }
