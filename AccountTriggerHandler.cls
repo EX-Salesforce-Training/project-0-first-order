@@ -81,8 +81,6 @@ public class AccountTriggerHandler{
             
             paiList.add(paiBuffer);
             // Debug Section
-            //System.debug('Last Name: '+ solver.GetLName());
-
         }
         try{
             insert paiList;
