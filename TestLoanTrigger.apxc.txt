@@ -1,0 +1,29 @@
+@isTest public class TestLoanTrigger {
+    @isTest static void TestLoan(){
+        List<Loan__c> testLoan = new List<Loan__c>();
+        
+        
+        List<Bank_Account__c> testAccs = new List<Bank_Account__c>();
+        
+        for(Integer i = 0; i < 1; i++){
+                testAccs.add(new Bank_Account__c(Name='Test ' + i, Account_Type__c='Checkings', Account_Number__c='9999' + i));
+            }
+        insert testAccs;
+        
+        List<Bank_Account__c> testAccounts  = [SELECT Id FROM Bank_Account__c];
+        for(Bank_Account__c tAcc : testAccounts){
+            //tAcc.Id;
+            for(integer i =0; i < 2; i++ ){
+            	testLoan.add(new Loan__c(Account__c = tAcc.Id , Name='Steven Fernandez' + i));// add 200 loans
+        	}
+        }
+       	
+       
+        // Perform test
+        List<Database.SaveResult> results = Database.insert(testLoan, false);
+        
+        List <Loan__c> testLoans = [Select id from Loan__c];
+        System.assertEquals(1,testLoans.size());
+        
+    }
+}
