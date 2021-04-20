@@ -1,8 +1,10 @@
 # Test Code Coverage for all the Triggers
 
 
-![Capture](https://user-images.githubusercontent.com/43973882/114759474-0fcd8a00-9d13-11eb-8f34-c3b228adbe02.PNG)
+![Capture](https://user-images.githubusercontent.com/43973882/115409382-8dc3e200-a1a6-11eb-871b-2fe359e026f0.PNG)
 
 # Process Automation High level overview
 
-![Automation](https://user-images.githubusercontent.com/43973882/115160234-04989800-a04c-11eb-801f-6130ce79d7df.png)
+![Cropped Process Automation](https://user-images.githubusercontent.com/43973882/115409449-9fa58500-a1a6-11eb-8590-503cc8e0f315.png)
+
+
