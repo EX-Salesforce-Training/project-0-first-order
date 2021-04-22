@@ -1,7 +1,7 @@
 trigger IncidentTrigger on Incident__c (before insert, after insert, before update, after update, before delete, after delete, after undelete) {
     switch on trigger.operationType {
         when BEFORE_INSERT {
-			IncidentTriggerHandler.AssignTasksToManager(trigger.new);
+
         }
         when BEFORE_UPDATE {
 
@@ -10,7 +10,7 @@ trigger IncidentTrigger on Incident__c (before insert, after insert, before upda
 
         }
         when AFTER_INSERT {
-
+			     IncidentTriggerHandler.AssignTasksToManager(trigger.new);
         }
         when AFTER_UPDATE {
 

@@ -10,6 +10,7 @@ public class ClassRosterTriggerTest {
             account.name = 'test account ' + (i + 1);
             accounts.add(account);
         }
+        System.debug(accounts);
         Insert accounts;
 
         //Generate and insert contacts
@@ -23,6 +24,7 @@ public class ClassRosterTriggerTest {
         }
         Insert contacts;
 
+        User u = [SELECT id FROM User WHERE lastname = 'Muller' LIMIT 1];
         //Generate and insert classes
         List<Class__c> classes = new List<Class__c>();
         for (Integer i = 0; i < 151; i++) {
@@ -33,6 +35,7 @@ public class ClassRosterTriggerTest {
             newClass.Capacity__c = 4;
             newClass.Class_Price__c = '$75';
             newClass.Class_Type__c = 'Group';
+            newClass.Instructor__c = u.Id;
             classes.add(newClass);
         }
         Insert classes;

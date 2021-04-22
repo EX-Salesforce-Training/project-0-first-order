@@ -44,10 +44,15 @@ public class IncidentTriggerTest {
 
     @isTest
     private static void TP_AssignTasksToManager() {
+        Contact c = new Contact();
+        c.lastName = 'test';
+        Insert c;
+
         Incident__c newIncident = new Incident__c();
         newIncident.Incident_Description__c = 'Test description';
         newIncident.Incident_Time__c = System.now();
         newIncident.Incident_Area__c = 'Deck';
+        newIncident.Victim__c = c.Id;
         newIncident.Location_of_Incident__c = 'Deck - Entry';
 
         Insert newIncident;
@@ -59,12 +64,17 @@ public class IncidentTriggerTest {
 
     @isTest
     private static void TB_AssignTasksToManager() {
+        Contact c = new Contact();
+        c.lastName = 'test';
+        Insert c;
+
         List<Incident__c> newIncidents = new List<Incident__c>();
         for (Integer i = 0; i < 151; i++) {
             Incident__c newIncident = new Incident__c();
         	newIncident.Incident_Description__c = 'Test description ' + (i + 1);
         	newIncident.Incident_Time__c = System.now();
         	newIncident.Incident_Area__c = 'Deck';
+            newIncident.Victim__c = c.Id;
         	newIncident.Location_of_Incident__c = 'Deck - Entry';
             newIncidents.add(newIncident);
         }

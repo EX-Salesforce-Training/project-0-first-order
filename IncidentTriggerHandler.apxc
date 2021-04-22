@@ -29,6 +29,7 @@ public class IncidentTriggerHandler {
         newTask.Status = 'Not Started';
         newTask.Priority = GetPriority(newIncident);
         newTask.WhoId = newIncident.Victim__c;
+        newTask.WhatId = newIncident.Id;
 
         return newTask;
     }

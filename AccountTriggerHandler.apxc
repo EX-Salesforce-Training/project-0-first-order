@@ -8,7 +8,8 @@ public class AccountTriggerHandler {
         //Iterate through the accounts and link each primary
         for (Account newAccount : newAccounts) {
             Contact linkedContact = GetAndLinkPrimary(newAccount, accountMap.get(newAccount));
-            updatedContacts.add(linkedContact);
+            if (linkedContact != null)
+            	updatedContacts.add(linkedContact);
         }
         Database.Update(updatedContacts, false);
     }
